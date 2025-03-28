@@ -1,61 +1,54 @@
-<?php get_header() ?>
-
+<?php get_header(); ?>
 
 <main class="main-content">
-        <h1>Bienvenido a Inversur, repuestos para tu hogar</h1>
-        <section class="carousel">
-            <div class="carousel__container">
-                <div class="carousel__track">
-                    <div class="carousel__slide">
-                        <img src="./assets/img/producto1.jpg" alt="Producto 1">
-                    </div>
-                    <div class="carousel__slide">
-                        <img src="./assets/img/producto2.jpg" alt="Producto 2">
-                    </div>
-                    <div class="carousel__slide">
-                        <img src="./assets/img/producto3.jpg" alt="Producto 3">
-                    </div>
-                    <div class="carousel__slide">
-                        <img src="./assets/img/producto4.jpg" alt="Producto 4">
-                    </div>
-                    <div class="carousel__slide">
-                        <img src="./assets/img/producto5.jpg" alt="Producto 5">
-                    </div>
-                    <div class="carousel__slide">
-                        <img src="./assets/img/producto6.jpg" alt="Producto 6">
-                    </div>
-                </div>
-                <button class="carousel__button carousel__button--prev">
-                    <i class="fas fa-chevron-left"></i>
-                </button>
-                <button class="carousel__button carousel__button--next">
-                    <i class="fas fa-chevron-right"></i>
-                </button>
-                <div class="carousel__dots">
-                    <button class="carousel__dot active" data-index="0"></button>
-                    <button class="carousel__dot" data-index="1"></button>
-                    <button class="carousel__dot" data-index="2"></button>
-                    <button class="carousel__dot" data-index="3"></button>
-                    <button class="carousel__dot" data-index="4"></button>
-                    <button class="carousel__dot" data-index="5"></button>
-                </div>
-            </div>
-        </section>
+    <h1>Bienvenido a Inversur, repuestos para tu hogar</h1>
+    
+    <?php get_template_part('template-parts/content', 'carousel'); ?>
 
-        <h2>Todo para tu hogar</h2>
+    <h2>Todo para tu hogar</h2>
+    <?php get_template_part('template-parts/content', 'products'); ?>
 
-        <section class="product-grid">
-            <div class="product-card">
-                <figure class="product-card__image">
-                    <img src="./assets/img/producto1.jpg" alt="Producto 1" loading="lazy">
-                </figure>
-                <div class="product-card__content">
-                    <h3 class="product-card__title"><a href="producto.html">Producto Innovador</a></h3>
-                    <p class="product-card__price">$199.99</p>
-                    <button class="btn btn--primary">Agregar al carrito</button>
-                </div>
-            </div>
-        </section>
-    </main>
+    <section class="latest-posts">
+        <h2>Últimas Noticias</h2>
+        <div class="posts-grid">
+            <?php 
+            $args = array(
+                'post_type' => 'post',
+                'posts_per_page' => 3,
+                'orderby' => 'date',
+                'order' => 'DESC'
+            );
+            
+            $latest_posts = new WP_Query($args);
+            
+            if ($latest_posts->have_posts()) :
+                while ($latest_posts->have_posts()) : $latest_posts->the_post();
+            ?>
+                <article class="post-card">
+                    <div class="post-card__image">
+                        <?php 
+                        if (has_post_thumbnail()) {
+                            the_post_thumbnail('medium');
+                        }
+                        ?>
+                    </div>
+                    <div class="post-card__content">
+                        <h3 class="post-card__title">
+                            <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
+                        </h3>
+                        <div class="post-card__excerpt">
+                            <?php the_excerpt(); ?>
+                        </div>
+                        <a href="<?php the_permalink(); ?>" class="btn btn--secondary">Leer más</a>
+                    </div>
+                </article>
+            <?php 
+                endwhile;
+                wp_reset_postdata();
+            endif;
+            ?>
+        </div>
+    </section>
+</main>
 
-    <?php get_footer() ?>
+<?php get_footer(); ?>

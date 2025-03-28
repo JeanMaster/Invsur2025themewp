@@ -1,65 +1,29 @@
 document.addEventListener('DOMContentLoaded', function() {
     const track = document.querySelector('.carousel__track');
-    const slides = document.querySelectorAll('.carousel__slide');
-    const dots = document.querySelectorAll('.carousel__dot');
-    const prevButton = document.querySelector('.carousel__button--prev');
+    const slides = Array.from(track.children);
     const nextButton = document.querySelector('.carousel__button--next');
+    const prevButton = document.querySelector('.carousel__button--prev');
     
-    let currentSlide = 0;
-    const slideCount = slides.length;
-    const slideWidth = 100 / slideCount;
+    let currentIndex = 0;
     
-    // Configurar el ancho del track
-    track.style.width = `${slideCount * 100}%`;
-    
-    // Configurar el ancho de cada slide
-    slides.forEach(slide => {
-        slide.style.width = `${slideWidth}%`;
+    // Configurar posición inicial
+    slides.forEach((slide, index) => {
+        slide.style.left = index * 100 + '%';
     });
     
-    // Función para actualizar la posición del carrusel
-    function updateCarousel() {
-        track.style.transform = `translateX(-${currentSlide * slideWidth}%)`;
-        // Actualizar dots
-        dots.forEach((dot, index) => {
-            dot.classList.toggle('active', index === currentSlide);
-        });
-    }
-    
-    // Función para ir al siguiente slide
-    function nextSlide() {
-        currentSlide = (currentSlide + 1) % slideCount;
-        updateCarousel();
-    }
-    
-    // Función para ir al slide anterior
-    function prevSlide() {
-        currentSlide = (currentSlide - 1 + slideCount) % slideCount;
-        updateCarousel();
+    // Función para mover slides
+    function moveSlides(direction) {
+        currentIndex = direction === 'next' 
+            ? (currentIndex + 1) % slides.length 
+            : (currentIndex - 1 + slides.length) % slides.length;
+            
+        track.style.transform = `translateX(-${currentIndex * 100}%)`;
     }
     
     // Event listeners para los botones
-    nextButton.addEventListener('click', nextSlide);
-    prevButton.addEventListener('click', prevSlide);
+    nextButton.addEventListener('click', () => moveSlides('next'));
+    prevButton.addEventListener('click', () => moveSlides('prev'));
     
-    // Event listeners para los dots
-    dots.forEach((dot, index) => {
-        dot.addEventListener('click', () => {
-            currentSlide = index;
-            updateCarousel();
-        });
-    });
-    
-    // Autoplay
-    let autoplayInterval = setInterval(nextSlide, 5000); // Cambia de slide cada 5 segundos
-    
-    // Pausar autoplay cuando el mouse está sobre el carrusel
-    track.addEventListener('mouseenter', () => {
-        clearInterval(autoplayInterval);
-    });
-    
-    // Reanudar autoplay cuando el mouse sale del carrusel
-    track.addEventListener('mouseleave', () => {
-        autoplayInterval = setInterval(nextSlide, 5000);
-    });
+    // Autoplay opcional
+    setInterval(() => moveSlides('next'), 5000);
 }); 
